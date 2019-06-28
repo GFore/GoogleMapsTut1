@@ -1,17 +1,22 @@
 import React from 'react';
-import { withGoogleMap, withScriptjs, GoogleMap, Marker } from 'react-google-maps'
+import { withGoogleMap, withScriptjs, GoogleMap, Marker, Polyline } from 'react-google-maps'
 
 class Map extends React.Component {
+  path = [
+    { lat: 18.558908, lng: -68.389916 },
+    { lat: 18.558853, lng: -68.389922 },
+    { lat: 18.558375, lng: -68.389729 },
+    { lat: 18.558032, lng: -68.389182 },
+    { lat: 18.55805, lng: -68.388613 },
+    { lat: 18.558256, lng: -68.388213 },
+    { lat: 18.558744, lng: -68.387929 }
+  ];
+
   render = () => {
     return (
-      <GoogleMap
-        defaultZoom={16}
-        defaultCenter={{ lat: 18.559008, lng: -68.388881 }}
-        >
-          <Marker position={{
-            lat: 18.559024,
-            lng: -68.388886,
-          }} />
+      <GoogleMap defaultZoom={16} defaultCenter={{ lat: 18.559008, lng: -68.388881 }} >
+        <Marker position={{ lat: 18.559024, lng: -68.388886 }} />
+        <Polyline path={this.path} options={{ strokeColor: "#FF0000 " }} />
       </GoogleMap>
     )
   }
