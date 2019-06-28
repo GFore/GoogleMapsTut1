@@ -15,8 +15,9 @@ class Map extends React.Component {
   render = () => {
     return (
       <GoogleMap defaultZoom={16} defaultCenter={{ lat: 18.559008, lng: -68.388881 }} >
-        <Marker position={{ lat: 18.559024, lng: -68.388886 }} />
+        {/* <Marker position={{ lat: 18.559024, lng: -68.388886 }} /> */}
         <Polyline path={this.path} options={{ strokeColor: "#FF0000 " }} />
+        <Marker position={this.path[this.path.length - 1]} />
       </GoogleMap>
     )
   }
