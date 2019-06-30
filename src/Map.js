@@ -2,6 +2,11 @@ import React from 'react';
 import { withGoogleMap, withScriptjs, GoogleMap, Marker, Polyline } from 'react-google-maps'
 
 class Map extends React.Component {
+
+  state = {
+    progress: [],
+  }
+
   path = [
     { lat: 18.558908, lng: -68.389916 },
     { lat: 18.558853, lng: -68.389922 },
@@ -19,6 +24,45 @@ class Map extends React.Component {
     // seconds between when the component loaded and now
     const differentInTime = (new Date() - this.initialDate) / 1000 // pass to seconds
     return differentInTime * this.velocity // d = v*t -- thanks Newton!
+  }
+
+  moveObject = () => {
+    const distance = this.getDistance()
+    if (! distance) {
+      return
+    }
+
+    let progress = this.path.filter(coordinates => coordinates.distance < distance)
+
+    const nextLine = this.path.find(coordinates => coordinates.distance > distance)
+    if (! nextLine) {
+      this.setState({ progress })
+      return // it's the end!
+    }
+    const lastLine = progress[progress.length - 1]
+
+    const lastLineLatLng = new window.google.maps.LatLng(
+      lastLine.lat,
+      lastLine.lng
+    )
+
+    const nextLineLatLng = new window.google.maps.LatLng(
+      nextLine.lat,
+      nextLine.lng
+    )
+
+    // distance of this line 
+    const totalDistance = nextLine.distance - lastLine.distance
+    const percentage = (distance - lastLine.distance) / totalDistance
+
+    const position = window.google.maps.geometry.spherical.interpolate(
+      lastLineLatLng,
+      nextLineLatLng,
+      percentage
+    )
+
+    progress = progress.concat(position)
+    this.setState({ progress })
   }
 
   componentDidMount = () => {
@@ -60,8 +104,12 @@ class Map extends React.Component {
   render = () => {
     return (
       <GoogleMap defaultZoom={16} defaultCenter={{ lat: 18.559008, lng: -68.388881 }} >
-        <Polyline path={this.path} options={{ strokeColor: "#FF0000 " }} />
-        <Marker position={this.path[this.path.length - 1]} />
+        { this.state.progress && (
+            <>
+              <Polyline path={this.state.progress} options={{ strokeColor: "#FF0000 "}} />
+              <Marker position={this.state.progress[this.state.progress.length - 1]} />
+            </>
+          )}
       </GoogleMap>
     )
   }
